@@ -1,23 +1,43 @@
 <?php
 
+use App\Http\Controllers\FishController;
+use App\Http\Controllers\PublicAuthController;
+use App\Http\Controllers\RegionController;
+use App\Models\Region;
+use App\Models\Web_Settings;
 use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
-use Illuminate\Support\Facades\Response;
 
-/* NOTE: Do Not Remove
-/ Livewire asset handling if using sub folder in domain
-*/
-
-Livewire::setUpdateRoute(function ($handle) {
-    return Route::post(config('app.asset_prefix') . '/livewire/update', $handle);
-});
-
-Livewire::setScriptRoute(function ($handle) {
-    return Route::get(config('app.asset_prefix') . '/livewire/livewire.js', $handle);
-});
-/*
-/ END
-*/
+// HALAMAN UTAMA
 Route::get('/', function () {
-    return view('welcome');
-});
+    $webSetting = Web_Settings::latest()->first();
+    $regions = Region::latest()->get();
+
+    return view('welcome', compact('webSetting', 'regions'));
+})->name('home');
+
+// AUTH PUBLIC USER
+// Login user biasa
+Route::get('/login', [PublicAuthController::class, 'showLogin'])
+    ->name('public.login.form');
+
+Route::post('/login', [PublicAuthController::class, 'login'])
+    ->name('public.login');
+
+// Register user biasa
+Route::get('/register', [PublicAuthController::class, 'showRegister'])
+    ->name('public.register.form');
+
+Route::post('/register', [PublicAuthController::class, 'register'])
+    ->name('public.register');
+
+// Logout user biasa
+Route::post('/logout', [PublicAuthController::class, 'logout'])
+    ->name('public.logout');
+
+// HALAMAN DETAIL REGION / WILAYAH
+Route::get('/region/{slug}', [RegionController::class, 'show'])
+    ->name('region.show');
+
+// HALAMAN DETAIL IKAN / CREATURE
+Route::get('/fish/{slug}', [FishController::class, 'show'])
+    ->name('fish.show');
