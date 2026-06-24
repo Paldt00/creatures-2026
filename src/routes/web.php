@@ -9,28 +9,25 @@ use Illuminate\Support\Facades\Route;
 
 // HALAMAN UTAMA
 Route::get('/', function () {
-    $webSetting = Web_Settings::latest()->first();
-    $regions = Region::latest()->get();
+    $webSetting = Web_Settings::latest('id')->first();
+    $regions = Region::latest('id')->get();
 
     return view('welcome', compact('webSetting', 'regions'));
 })->name('home');
 
 // AUTH PUBLIC USER
-// Login user biasa
 Route::get('/login', [PublicAuthController::class, 'showLogin'])
     ->name('public.login.form');
 
 Route::post('/login', [PublicAuthController::class, 'login'])
     ->name('public.login');
 
-// Register user biasa
 Route::get('/register', [PublicAuthController::class, 'showRegister'])
     ->name('public.register.form');
 
 Route::post('/register', [PublicAuthController::class, 'register'])
     ->name('public.register');
 
-// Logout user biasa
 Route::post('/logout', [PublicAuthController::class, 'logout'])
     ->name('public.logout');
 

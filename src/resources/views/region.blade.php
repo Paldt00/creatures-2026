@@ -17,7 +17,7 @@
             background: #0a2540;
             padding: 15px 30px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
         }
 
@@ -44,6 +44,10 @@
             color: #164e87;
             text-decoration: none;
             font-weight: 500;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
         }
 
         .header-box {
@@ -90,6 +94,10 @@
             text-decoration: none;
             font-weight: bold;
             margin-top: 15px;
+        }
+
+        .add-btn:hover {
+            background: #00b89a;
         }
 
         .fish-list-grid {
@@ -174,16 +182,12 @@
     <strong>
         <a href="{{ route('home') }}">🐟 Freshwater Wiki</a>
     </strong>
-
-    @auth
-        <a href="{{ url('/admin') }}">Admin Panel</a>
-    @endauth
 </div>
 
 <div class="container">
     <div class="breadcrumbs">
         <a href="{{ route('home') }}">Home</a> /
-        <span>Region</span> /
+        <a href="{{ route('home') }}">Region</a> /
         <strong>{{ $region->name }}</strong>
     </div>
 
@@ -204,7 +208,9 @@
             </p>
 
             @auth
-                <a href="{{ url('/admin/fish/create') }}" class="add-btn">+ Add Fish Species</a>
+                <a href="{{ url('/admin/regions/' . $region->id . '/edit') }}" class="add-btn">
+                    + Add Species
+                </a>
             @endauth
         </div>
     </div>

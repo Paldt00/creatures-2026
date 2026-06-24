@@ -89,9 +89,27 @@ class FishResource extends Resource
                             ->label('Average Weight')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('status')
+                        Forms\Components\Select::make('status')
                             ->label('Status')
-                            ->maxLength(255),
+                            ->options([
+                                'Extinct' => 'Extinct',
+                                'Endangered' => 'Endangered',
+                                'Least Concern' => 'Least Concern',
+                                'Data Deficient' => 'Data Deficient',
+                                'Invasive' => 'Invasive',
+                            ])
+                            ->searchable()
+                            ->native(false),
+
+                        Forms\Components\Select::make('biogeography')
+                            ->label('Biogeografi')
+                            ->options([
+                                'Native' => 'Native',
+                                'Endemic' => 'Endemic',
+                                'Introduction' => 'Introduction',
+                            ])
+                            ->searchable()
+                            ->native(false),
                     ])
                     ->columns(2),
             ]);
@@ -121,6 +139,11 @@ class FishResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
+                    ->badge()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('biogeography')
+                    ->label('Biogeografi')
                     ->badge()
                     ->searchable(),
 
@@ -157,7 +180,6 @@ class FishResource extends Resource
     {
         return [
             'index' => Pages\ListFish::route('/'),
-            'create' => Pages\CreateFish::route('/create'),
             'edit' => Pages\EditFish::route('/{record}/edit'),
         ];
     }

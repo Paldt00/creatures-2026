@@ -242,10 +242,6 @@
 
     <div class="nav-actions">
         @auth
-            <a href="{{ url('/admin') }}" class="login-btn">
-                Add Region / Species
-            </a>
-
             <form method="POST" action="{{ route('public.logout') }}" style="margin: 0;">
                 @csrf
                 <button type="submit" class="logout-btn">
@@ -268,12 +264,12 @@
             </h1>
 
             <p>
-                {{ $webSetting?->description ?? 'Eksplorasi mini wiki tentang ikan air tawar, habitat sungai, rawa, serta karakteristik biologis dari berbagai wilayah dunia.' }}
+                {{ $webSetting?->description ?? '' }}
             </p>
 
             @auth
                 <div class="hero-actions">
-                    <a href="{{ url('/admin/regions/create') }}" class="primary-btn">
+                    <a href="{{ url('/admin/web-settings') }}" class="primary-btn">
                         + Add Region
                     </a>
                 </div>
@@ -294,7 +290,6 @@
     @if ($regions->isEmpty())
         <div class="empty">
             <h3>Belum ada region</h3>
-            <p>Login terlebih dahulu untuk menambahkan region.</p>
         </div>
     @else
         <div class="region-grid">

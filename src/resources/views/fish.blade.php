@@ -18,7 +18,7 @@
             background: #0a2540;
             padding: 15px 30px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
         }
 
@@ -44,6 +44,10 @@
         .breadcrumbs a {
             color: #164e87;
             text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
         }
 
         .layout {
@@ -151,6 +155,17 @@
             color: #744210;
         }
 
+        .bio-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
         .edit-btn {
             display: inline-block;
             margin-top: 20px;
@@ -160,6 +175,10 @@
             border-radius: 20px;
             text-decoration: none;
             font-weight: bold;
+        }
+
+        .edit-btn:hover {
+            background: #00b89a;
         }
 
         @media (max-width: 900px) {
@@ -179,15 +198,12 @@
     <strong>
         <a href="{{ route('home') }}">🐟 Freshwater Wiki</a>
     </strong>
-
-    @auth
-        <a href="{{ url('/admin') }}">Admin Panel</a>
-    @endauth
 </div>
 
 <div class="container">
     <div class="breadcrumbs">
         <a href="{{ route('home') }}">Home</a> /
+        <a href="{{ route('home') }}">Region</a> /
         <a href="{{ route('region.show', $fish->region->slug) }}">{{ $fish->region->name }}</a> /
         <strong>{{ $fish->name }}</strong>
     </div>
@@ -207,7 +223,7 @@
             </p>
 
             @auth
-                <a href="{{ url('/admin/fish/' . $fish->id . '/edit') }}" class="edit-btn">
+                <a href="{{ url('/admin/regions/' . $fish->region_id . '/edit') }}" class="edit-btn">
                     Edit Data
                 </a>
             @endauth
@@ -250,6 +266,15 @@
                     <td class="value">
                         <span class="status-badge">
                             {{ $fish->status ?? 'Unknown' }}
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label">Biogeografi</td>
+                    <td class="value">
+                        <span class="bio-badge">
+                            {{ $fish->biogeography ?? '-' }}
                         </span>
                     </td>
                 </tr>

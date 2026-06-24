@@ -22,6 +22,7 @@ class Fish extends Model
         'habitat',
         'average_weight',
         'status',
+        'biogeography',
     ];
 
     protected static function booted(): void

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\RegionResource\RelationManagers;
 
+use App\Models\Fish;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -29,6 +30,7 @@ class FishesRelationManager extends RelationManager
                         Forms\Components\TextInput::make('name')
                             ->label('Nama Creature')
                             ->required()
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (string $operation, $state, Forms\Set $set) {
                                 if ($operation === 'create') {
@@ -37,8 +39,13 @@ class FishesRelationManager extends RelationManager
                             }),
 
                         Forms\Components\Hidden::make('slug')
+                            ->dehydrated()
                             ->required()
-                            ->unique(ignoreRecord: true),
+                            ->unique(
+                                table: 'fishes',
+                                column: 'slug',
+                                ignoreRecord: true
+                            ),
 
                         Forms\Components\TextInput::make('scientific_name')
                             ->label('Nama Ilmiah')
@@ -73,9 +80,27 @@ class FishesRelationManager extends RelationManager
                             ->label('Berat Rata-rata')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('status')
+                        Forms\Components\Select::make('status')
                             ->label('Status')
-                            ->maxLength(255),
+                            ->options([
+                                'Extinct' => 'Extinct',
+                                'Endangered' => 'Endangered',
+                                'Least Concern' => 'Least Concern',
+                                'Data Deficient' => 'Data Deficient',
+                                'Invasive' => 'Invasive',
+                            ])
+                            ->searchable()
+                            ->native(false),
+
+                        Forms\Components\Select::make('biogeography')
+                            ->label('Biogeografi')
+                            ->options([
+                                'Native' => 'Native',
+                                'Endemic' => 'Endemic',
+                                'Introduction' => 'Introduction',
+                            ])
+                            ->searchable()
+                            ->native(false),
                     ])
                     ->columns(2),
             ]);
@@ -106,9 +131,13 @@ class FishesRelationManager extends RelationManager
                     ->label('Status')
                     ->badge(),
 
+                Tables\Columns\TextColumn::make('biogeography')
+                    ->label('Biogeografi')
+                    ->badge(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
             ->headerActions([
@@ -117,6 +146,14 @@ class FishesRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['user_id'] = Auth::id();
 
+                        if (blank($data['slug'] ?? null) && filled($data['name'] ?? null)) {
+                            $data['slug'] = $this->makeUniqueFishSlug($data['name']);
+                        }
+
+                        if (filled($data['slug'] ?? null)) {
+                            $data['slug'] = $this->makeUniqueFishSlug($data['slug']);
+                        }
+
                         return $data;
                     }),
             ])
@@ -124,7 +161,7 @@ class FishesRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
                         if (blank($data['slug'] ?? null) && filled($data['name'] ?? null)) {
-                            $data['slug'] = Str::slug($data['name']);
+                            $data['slug'] = $this->makeUniqueFishSlug($data['name']);
                         }
 
                         return $data;
@@ -135,5 +172,19 @@ class FishesRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    private function makeUniqueFishSlug(string $value): string
+    {
+        $slug = Str::slug($value);
+        $originalSlug = $slug;
+        $counter = 2;
+
+        while (Fish::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }

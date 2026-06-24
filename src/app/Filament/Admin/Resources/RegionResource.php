@@ -105,7 +105,6 @@ class RegionResource extends Resource
     {
         return [
             'index' => Pages\ListRegions::route('/'),
-            'create' => Pages\CreateRegion::route('/create'),
             'edit' => Pages\EditRegion::route('/{record}/edit'),
         ];
     }

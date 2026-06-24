@@ -8,7 +8,11 @@ class RegionController extends Controller
 {
     public function show(string $slug)
     {
-        $region = Region::with('fishes')
+        $region = Region::with([
+            'fishes' => function ($query) {
+                $query->latest('id');
+            },
+        ])
             ->where('slug', $slug)
             ->firstOrFail();
 
